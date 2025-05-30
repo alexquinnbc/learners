@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ink & Impact: A Legacy Forged in Marks</title>
+    <style>
+        :root {
+            --color-primary-deep-ink: #1A1D2E;
+            --color-primary-midnight-blue: #2C3E50;
+            --color-background-parchment: #FBF5E9;
+            --color-background-aged-paper: #EFE8D8;
+            --color-accent-cyan-vibrant: #00CFE8;
+            --color-accent-burnished-gold: #C09553;
+            --color-text-light-cream: #F8F4ED;
+            --color-text-dark-charcoal: #343A40;
+            --color-highlight-amber: #FFBF00;
+
+            --font-display-serif: 'Playfair Display', serif;
+            --font-heading-sans: 'Raleway', sans-serif;
+            --font-body-text: 'Lato', sans-serif;
+
+            --shadow-soft: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-medium: 0 8px 25px rgba(0,0,0,0.1);
+            --shadow-strong: 0 12px 35px rgba(0,0,0,0.12);
+
+            --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-interactive: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Raleway:wght@300;400;700;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: var(--font-body-text);
+            color: var(--color-text-dark-charcoal);
+            background-color: var(--color-background-parchment);
+            line-height: 1.75;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        section { /* General section styling - NO initial opacity/transform here */
+            min-height: 100vh;
+            padding: 120px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            transition: opacity 0.9s var(--transition-smooth), transform 0.9s var(--transition-smooth);
+            overflow: hidden;
+        }
+
+        /* This class will be added by JS to sections meant to be revealed on scroll */
+        .js-section-to-reveal {
+            opacity: 0;
+            transform: translateY(80px);
+        }
+
+        section.visible { /* Class added by JS when section is in view */
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        section:nth-of-type(even) {
+             background-color: var(--color-background-aged-paper);
+        }
+
+
+        .container {
+            max-width: 1050px;
+            margin: 0 auto;
+            width: 100%;
+            position: relative; 
+            z-index: 1;
+        }
+
+        h1, h2, h3, h4 {
+            line-height: 1.25;
+            margin-bottom: 0.75em;
+        }
+
+        h1 {
+            font-family: var(--font-display-serif);
+            font-size: clamp(3rem, 8vw, 5.5rem);
+            color: var(--color-text-light-cream);
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            text-shadow: 0 3px 10px rgba(0,0,0,0.6);
+        }
+
+        h2 {
+            font-family: var(--font-display-serif);
+            font-weight: 700;
+            font-size: clamp(2.5rem, 6vw, 3.8rem);
+            margin-bottom: 1em;
+        }
+        
+        h3 {
+            font-family: var(--font-heading-sans);
+            font-weight: 700;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+        }
+
+        h4 {
+            font-family: var(--font-heading-sans);
+            font-weight: 700;
+            font-size: clamp(1.4rem, 4vw, 1.9rem);
+        }
+
+        p {
+            font-size: clamp(1rem, 2.5vw, 1.15rem);
+            font-weight: 300;
+            max-width: 800px;
+            margin-bottom: 1.5em;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        p.lead {
+            font-size: clamp(1.15rem, 3vw, 1.45rem);
+            font-weight: 400;
+            margin-bottom: 1.75em;
+            color: var(--color-primary-midnight-blue);
+        }
+
+        blockquote {
+            font-family: var(--font-display-serif);
+            font-style: italic;
+            font-size: clamp(1.3rem, 3.5vw, 1.7rem);
+            font-weight: 400;
+            color: var(--color-accent-burnished-gold);
+            padding: 2.5em;
+            border-left: 8px solid var(--color-accent-burnished-gold);
+            background-color: rgba(192, 149, 83, 0.05);
+            margin: 2.5em auto;
+            max-width: 750px;
+            position: relative;
+            box-shadow: var(--shadow-soft);
+        }
+        blockquote::before {
+            content: '“';
+            font-size: 5em;
+            color: rgba(192, 149, 83, 0.15);
+            position: absolute;
+            left: 15px;
+            top: -5px;
+            line-height: 1;
+            font-family: var(--font-display-serif);
+        }
+        blockquote footer {
+            font-size: 0.8em;
+            text-align: right;
+            color: var(--color-text-dark-charcoal);
+            margin-top: 1em;
+            background: none; padding:0; font-style: normal; font-weight: 300;
+        }
+
+        /* --- Hero Section --- */
+        #hero { /* Hero is inherently visible as 'section' doesn't hide by default */
+            background-color: var(--color-primary-deep-ink);
+            color: var(--color-text-light-cream);
+            display: flex;
+            align-items: center;
+        }
+        #hero .container {
+            position: relative; 
+            z-index: 2; 
+        }
+        #hero::before, #hero::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            border-radius: 50%;
+            opacity: 0;
+            animation: heroInkSpread 15s infinite linear;
+            z-index: 1; 
+        }
+        #hero::before {
+            width: 150vmax; height: 150vmax;
+            background: radial-gradient(circle, rgba(44, 62, 80, 0.4) 0%, rgba(44, 62, 80, 0) 60%);
+            transform: translate(-50%, -50%) scale(0.5);
+            animation-delay: 0s;
+        }
+        #hero::after {
+            width: 120vmax; height: 120vmax;
+            background: radial-gradient(circle, rgba(0, 207, 232, 0.15) 0%, rgba(0, 207, 232, 0) 50%);
+            transform: translate(-50%, -50%) scale(0.6);
+            animation-delay: -7.5s;
+        }
+        @keyframes heroInkSpread {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            20% { opacity: 0.5; }
+            80% { opacity: 0.3; }
+            100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0; }
+        }
+
+        #hero h1 {
+            opacity: 0;
+            transform: translateY(50px) scale(0.9);
+            animation: heroTextAppear 1.5s 0.7s forwards var(--transition-smooth);
+        }
+        #hero .tagline {
+            opacity: 0;
+            transform: translateY(50px);
+            animation: heroTextAppear 1.5s 1.2s forwards var(--transition-smooth);
+            font-size: clamp(1.4rem, 4vw, 2rem);
+            margin-top: 1em;
+            font-family: var(--font-heading-sans);
+            font-weight: 300;
+            color: rgba(248, 244, 237, 0.9);
+        }
+        .scroll-indicator {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--color-text-light-cream);
+            font-size: 1.1rem;
+            animation: bounceIndicator 3s infinite ease-in-out;
+            opacity: 0.9;
+            z-index: 2;
+        }
+        .scroll-indicator span { display: block; font-weight: 700; }
+        .scroll-indicator .arrow { font-size: 1.5em; line-height: 1; }
+
+        @keyframes heroTextAppear {
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes bounceIndicator {
+            0%, 100% { transform: translate(-50%, 0); }
+            50% { transform: translate(-50%, -15px); }
+        }
+
+        /* --- Ballpoint Pen Section --- */
+        #pen-section h2 { color: var(--color-primary-midnight-blue); }
+        #pen-section { background-color: var(--color-background-parchment); }
+
+        .stat-counter-wrapper {
+            margin: 3em 0;
+            padding: 2.5em;
+            background: linear-gradient(145deg, rgba(255,255,255,0.7), rgba(255,255,255,0.4));
+            border-radius: 15px;
+            display: inline-block;
+            box-shadow: var(--shadow-medium);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        #pen-counter {
+            font-size: clamp(4rem, 10vw, 6.5rem);
+            font-weight: 900;
+            color: var(--color-accent-cyan-vibrant);
+            font-family: var(--font-heading-sans);
+            line-height: 1;
+            text-shadow: 0 2px 5px rgba(0, 207, 232, 0.3);
+        }
+        .stat-counter-wrapper p {
+            font-size: clamp(1.2rem, 3vw, 1.6rem);
+            color: var(--color-primary-midnight-blue);
+            margin-top: 0.5em; margin-bottom: 0.25em;
+            font-weight: 700;
+        }
+        .stat-counter-wrapper small { font-size: 0.9rem; color: var(--color-text-dark-charcoal); font-weight: 300;}
+        
+        .interactive-card-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 3.5em;
+        }
+        .pen-card {
+            background-color: #fff;
+            border-radius: 20px;
+            box-shadow: var(--shadow-strong);
+            padding: 2.8em;
+            width: 100%;
+            max-width: 450px;
+            text-align: left;
+            transition: transform var(--transition-interactive) var(--transition-smooth), box-shadow var(--transition-interactive) var(--transition-smooth);
+            cursor: pointer;
+            border: 1px solid #E0E0E0;
+        }
+        .pen-card:hover, .pen-card:focus-within {
+            transform: translateY(-12px) scale(1.035);
+            box-shadow: 0 18px 45px rgba(44, 62, 80, 0.2);
+        }
+        .pen-card .image-placeholder {
+            width: 100%;
+            height: 200px;
+            background-color: #E9ECEF;
+            border-radius: 10px;
+            margin-bottom: 1.5em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ADB5BD;
+            font-family: var(--font-heading-sans);
+            font-size: 1.2rem;
+            font-style: italic;
+            border: 2px dashed #CED4DA;
+        }
+        .pen-card .image-placeholder::before {
+            content: '✒️';
+            font-size: 3rem;
+            opacity: 0.5;
+        }
+
+        .pen-card .details {
+            font-size: 1.05rem;
+            font-weight: 300;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.6s ease-in-out, margin-top 0.6s ease-in-out, opacity 0.6s ease-in-out;
+            opacity: 0;
+        }
+        .pen-card.expanded .details {
+            max-height: 450px; margin-top: 1.8em; opacity: 1;
+        }
+        .pen-card .details li {
+            margin-bottom: 0.8em; list-style-type: '› '; margin-left: 1em; padding-left: 0.5em;
+        }
+        .pen-card .click-indicator {
+            font-size: 1em; color: var(--color-accent-cyan-vibrant); font-weight: 700; display: block; margin-top: 0.8em;
+        }
+
+        /* --- Printing Press Section --- */
+        #press-section h2 { color: var(--color-accent-burnished-gold); }
+        #press-section { background-color: var(--color-background-aged-paper); }
+        
+        .then-now-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5em;
+            margin: 3em auto; width: 100%;
+        }
+        .then-now-card {
+            background-color: #fff;
+            border: 1px solid #DCD0BF;
+            border-radius: 15px;
+            padding: 2.2em;
+            box-shadow: var(--shadow-medium);
+            text-align: center;
+            display: flex; flex-direction: column; justify-content: space-between;
+             transition: transform var(--transition-interactive), box-shadow var(--transition-interactive);
+        }
+        .then-now-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-strong);
+        }
+        .then-now-card h4 {
+            color: var(--color-accent-burnished-gold);
+            font-size: 1.6rem;
+        }
+        .then-now-card .icon {
+            font-size: 4rem; margin-bottom: 0.5em; color: var(--color-accent-burnished-gold);
+            line-height: 1;
+        }
+        .then-now-card p { font-size: 1rem; font-weight: 300; }
+        .then-now-card strong { font-weight: 700; color: var(--color-primary-deep-ink); }
+
+        .toggle-impact-button {
+            background-color: var(--color-accent-burnished-gold);
+            color: var(--color-text-light-cream);
+            border: none;
+            padding: 0.8em 2em;
+            font-size: 1.1rem;
+            font-family: var(--font-heading-sans); font-weight: 700;
+            border-radius: 10px; cursor: pointer;
+            transition: background-color var(--transition-interactive), transform var(--transition-interactive), box-shadow var(--transition-interactive);
+            margin-top: 2em; display: block; margin-left: auto; margin-right: auto;
+            box-shadow: var(--shadow-soft);
+        }
+        .toggle-impact-button:hover {
+            background-color: #A57C43;
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-medium);
+        }
+        #then-card { display: flex; }
+        #now-card { display: none; }
+
+        .timeline {
+            list-style: none; padding: 0; margin: 4em auto; max-width: 800px; position: relative;
+        }
+        .timeline::before {
+            content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 5px;
+            background-image: linear-gradient(to bottom, var(--color-accent-burnished-gold), rgba(192, 149, 83, 0.5));
+            transform: translateX(-50%); border-radius: 3px;
+        }
+        .timeline-item {
+            padding: 1em 2.5em; position: relative; width: 50%;
+            opacity: 0; transform: translateY(40px) scale(0.97);
+            transition: opacity 0.8s var(--transition-smooth), transform 0.8s var(--transition-smooth);
+        }
+        .timeline-item.visible { opacity: 1; transform: translateY(0) scale(1); }
+        .timeline-item:nth-child(odd) { left: 0; text-align: right; padding-right: 4em; }
+        .timeline-item:nth-child(even) { left: 50%; text-align: left; padding-left: 4em; }
+        .timeline-item::after {
+            content: ''; position: absolute; width: 22px; height: 22px;
+            border-radius: 50%; background-color: var(--color-background-parchment);
+            border: 5px solid var(--color-accent-burnished-gold);
+            top: 2em; z-index: 1; box-shadow: 0 0 10px rgba(192, 149, 83, 0.4);
+        }
+        .timeline-item:nth-child(odd)::after { right: -13.5px; transform: translateX(50%); }
+        .timeline-item:nth-child(even)::after { left: -13.5px; transform: translateX(-50%); }
+        .timeline-content {
+            padding: 1.8em; background-color: white; border-radius: 12px;
+            box-shadow: var(--shadow-medium); position: relative;
+            border: 1px solid #EAE0D5;
+        }
+        .timeline-content h5 {
+            font-family: var(--font-heading-sans); font-size: 1.3rem;
+            color: var(--color-primary-midnight-blue); margin-bottom: 0.5em; font-weight: 700;
+        }
+        .timeline-content p { font-size: 1rem; margin-bottom: 0; font-weight: 300; }
+
+        /* --- Common Thread Section --- */
+        #common-thread-section { background-color: var(--color-primary-deep-ink); color: var(--color-text-light-cream); }
+        #common-thread-section h2 { color: var(--color-accent-cyan-vibrant); }
+        .morph-visual-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2em;
+            margin: 3em auto;
+            padding: 2em;
+            border-radius: 15px;
+            background: rgba(255,255,255,0.05);
+            min-height: 150px;
+        }
+        .morph-icon {
+            font-size: clamp(3rem, 8vw, 5rem);
+            color: var(--color-accent-cyan-vibrant);
+            opacity: 0.3;
+            transition: opacity var(--transition-smooth), transform var(--transition-smooth);
+            transform: scale(0.8);
+        }
+        .morph-icon.active {
+            opacity: 1;
+            transform: scale(1.1);
+            text-shadow: 0 0 15px var(--color-accent-cyan-vibrant);
+        }
+        .morph-arrow {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            color: rgba(255,255,255,0.4);
+        }
+
+
+        /* --- Legacy Section --- */
+        #legacy-section h2 { color: var(--color-primary-midnight-blue); }
+        #legacy-section { background-color: var(--color-background-parchment); }
+
+        .thought-cloud-area {
+            margin-top: 3em; padding: 2.5em;
+            border: 3px dashed var(--color-accent-cyan-vibrant);
+            border-radius: 15px; color: var(--color-text-dark-charcoal);
+            background-color: rgba(0, 207, 232, 0.05);
+            box-shadow: inset 0 0 20px rgba(0, 207, 232, 0.1);
+        }
+        .thought-cloud-area p { margin-bottom: 1.2em; font-weight: 400; }
+        .thought-cloud-form { display: flex; justify-content: center; align-items: center; gap: 0.8em; flex-wrap: wrap;}
+        .thought-cloud-area input[type="text"] {
+            padding: 0.8em 1em; border: 1px solid #BDECF2;
+            border-radius: 10px; font-family: var(--font-body-text);
+            font-size: 1.05rem; flex-grow: 1; max-width: 350px;
+            transition: border-color var(--transition-interactive), box-shadow var(--transition-interactive);
+        }
+        .thought-cloud-area input[type="text"]:focus {
+            border-color: var(--color-accent-cyan-vibrant);
+            box-shadow: 0 0 0 3px rgba(0, 207, 232, 0.25);
+            outline: none;
+        }
+        .thought-cloud-area button {
+            padding: 0.8em 1.8em; background-color: var(--color-accent-cyan-vibrant);
+            color: var(--color-primary-deep-ink); border: none;
+            border-radius: 10px; cursor: pointer;
+            font-family: var(--font-heading-sans); font-weight: 700; font-size: 1.05rem;
+            transition: background-color var(--transition-interactive), transform var(--transition-interactive);
+        }
+        .thought-cloud-area button:hover { background-color: #00A8BF; transform: translateY(-2px); }
+        #shared-idea-display {
+            margin-top: 1.5em; font-style: italic; color: var(--color-primary-midnight-blue);
+            min-height: 1.5em; font-size: 1.1rem; font-weight: 700;
+        }
+        .shared-word-animation {
+            display: inline-block;
+            opacity: 0;
+            animation: floatUpAndFade 3s ease-out forwards;
+        }
+        @keyframes floatUpAndFade {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-80px) scale(0.5); }
+        }
+
+        /* --- Footer --- */
+        footer#page-footer {
+            text-align: center; padding: 4em 1.5em;
+            background-color: var(--color-primary-deep-ink); color: var(--color-text-light-cream);
+            opacity: 1; transform: none;
+            border-top: 5px solid var(--color-accent-burnished-gold);
+        }
+        footer#page-footer p { 
+            font-size: 1rem; color: rgba(248, 244, 237, 0.8);
+            margin-bottom: 1em; font-weight: 300;
+        }
+        footer#page-footer a {
+            color: var(--color-accent-cyan-vibrant); text-decoration: none; font-weight: 700;
+            transition: color var(--transition-interactive);
+        }
+        footer#page-footer a:hover { color: var(--color-highlight-amber); text-decoration: underline; }
+
+        :focus-visible {
+            outline: 4px solid var(--color-highlight-amber);
+            outline-offset: 4px;
+            border-radius: 6px;
+        }
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            padding: 0;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
+        @media (max-width: 992px) {
+            .timeline::before { left: 30px; }
+            .timeline-item, .timeline-item:nth-child(even), .timeline-item:nth-child(odd) {
+                width: 100%; left: 0; padding-left: 50px; padding-right: 15px; text-align: left;
+            }
+            .timeline-item::after, .timeline-item:nth-child(odd)::after, .timeline-item:nth-child(even)::after {
+                left: 30px; transform: translateX(-50%);
+            }
+        }
+        @media (max-width: 768px) {
+            section { padding: 80px 25px; }
+            h1 { font-size: clamp(2.5rem, 10vw, 3.5rem); }
+            h2 { font-size: clamp(2rem, 7vw, 2.8rem); }
+            .then-now-container { grid-template-columns: 1fr; }
+            .morph-visual-container { flex-direction: column; gap: 1em; }
+            .morph-arrow { transform: rotate(90deg); }
+            .thought-cloud-form { flex-direction: column; }
+            .thought-cloud-area input[type="text"] { width: 100%; max-width: none; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <main>
+        <section id="hero"> <!-- Hero section will be visible by default -->
+            <div class="container">
+                <h1>Ink & Impact</h1>
+                <p class="tagline">A Legacy Forged in Marks. From Personal Script to Global Scriptoria.</p>
+            </div>
+            <div class="scroll-indicator">
+                <span>Scroll to Unfold</span>
+                <span class="arrow">↓</span>
+            </div>
+        </section>
+
+        <section id="pen-section">
+            <div class="container">
+                <h2>The Quiet Authority: The Ballpoint Pen</h2>
+                <p class="lead">An emblem of everyday utility, the ballpoint pen is a marvel of mass production and democratic design. It's the most consumed manufactured item globally, a silent engine driving education, commerce, and personal expression across continents.</p>
+                <p>Its genius lies in its simplicity. László Bíró, a Hungarian journalist frustrated with smudgy fountain pens, conceived the idea in the 1930s. He observed that ink used in newspaper printing dried quickly, but was too viscous for a fountain pen. His innovation: a tiny, rotating metal ball that picked up this thicker ink from a cartridge and rolled it onto paper. The result? A reliable, leak-proof, and affordable writing instrument for everyone.</p>
+                
+                <div class="stat-counter-wrapper">
+                    <div id="pen-counter" data-target="100000000000">0</div>
+                    <p>Bic Cristal Pens Sold Since 1950 (Est.)</p>
+                    <small>A fraction of the tens of billions of all ballpoints consumed globally each year.</small>
+                </div>
+                
+                <div class="interactive-card-container">
+                    <div class="pen-card" id="penExplodedViewCard" role="button" tabindex="0" aria-expanded="false" aria-controls="penDetails">
+                        <div class="image-placeholder" aria-hidden="true">
+                        </div>
+                        <h4>Anatomy of Ubiquity</h4>
+                        <span class="click-indicator">Click or Press Enter to explore its design.</span>
+                        <ul class="details" id="penDetails">
+                            <li><strong>Tungsten Carbide Ball:</strong> The hero. A minuscule, incredibly hard sphere (0.5-1.2mm) that spins freely, transferring ink with precision. Its durability ensures consistent lines.</li>
+                            <li><strong>Oil-Based Ink & Reservoir:</strong> A slim cartridge holds specially formulated, quick-drying ink that flows smoothly via the ball, preventing smudges and leaks that plagued earlier pens.</li>
+                            <li><strong>Ergonomic Casing:</strong> Often a simple hexagonal barrel (like the Bic Cristal's iconic design) to prevent rolling and offer a comfortable grip. Mass-produced from affordable plastics like polystyrene.</li>
+                            <li><strong>Precision Tip:</strong> The metal housing for the ball, engineered to control ink flow and protect the delicate mechanism.</li>
+                            <li><strong>Global Impact:</strong> This unassuming tool democratized writing. It made personal documentation, note-taking, and creative expression accessible and portable for billions.</li>
+                        </ul>
+                    </div>
+                </div>
+                <p>The ballpoint pen's journey from patent in 1938 to global indispensability was swift. Its adoption by Royal Air Force pilots during WWII, who needed pens that wouldn't leak at high altitudes, further cemented its practicality. Today, it remains a symbol of accessible ingenuity.</p>
+            </div>
+        </section>
+
+        <section id="press-section">
+            <div class="container">
+                <h2>The Resounding Revolution: The Printing Press</h2>
+                <p class="lead">While the pen empowered the individual, Johannes Gutenberg's printing press, developed around 1440 in Mainz, Germany, gave ideas an unprecedented global voice. This invention didn't just change how books were made; it reshaped societies, religions, and the very course of human knowledge.</p>
+                
+                <blockquote>
+                    "Printing is the ultimate gift of God, and the greatest one."
+                    <footer>— Martin Luther, recognizing its power during the Reformation.</footer>
+                </blockquote>
+                <p>Before Gutenberg, knowledge was a scarce commodity. Books were hand-copied by scribes, a laborious process confining wisdom to the wealthy and the clergy. The printing press, with its movable metal type, oil-based ink, and mechanical press, shattered these confines, making information reproducible, affordable, and widely accessible.</p>
+
+                <h3>A World Transformed: Then & Now</h3>
+                <div class="then-now-container">
+                    <div class="then-now-card" id="then-card">
+                        <div>
+                            <div class="icon">📜</div>
+                            <h4>The Age of Scribes (Pre-1440s)</h4>
+                            <p><strong>Literacy & Books:</strong> Restricted to an elite few. Books were rare, hand-written treasures, taking months or years to produce one copy.</p>
+                            <p><strong>Knowledge Dissemination:</strong> Slow, localized, and easily controlled. Ideas spread at a crawl.</p>
+                            <p><strong>Societal Structure:</strong> Hierarchical, with information flow tightly managed by institutions.</p>
+                        </div>
+                    </div>
+                    <div class="then-now-card" id="now-card">
+                        <div>
+                            <div class="icon">📰</div>
+                            <h4>The Dawn of Print (Post-1450s)</h4>
+                            <p><strong>Literacy & Books:</strong> Exploded. By 1500, an estimated <strong>20 million books</strong> were in circulation across Europe. Prices plummeted.</p>
+                            <p><strong>Knowledge Dissemination:</strong> Rapid and widespread. Theses, discoveries, and debates could reach vast audiences quickly.</p>
+                            <p><strong>Societal Structure:</strong> Challenged and transformed. Fueled the Renaissance, Reformation, Scientific Revolution, and the rise of national languages and identities.</p>
+                        </div>
+                    </div>
+                </div>
+                <button id="toggleImpactButton" class="toggle-impact-button" aria-live="polite">Witness the Dawn of Print</button>
+
+                <h3>Milestones Forged by the Press</h3>
+                <ul class="timeline">
+                    <li class="timeline-item">
+                        <div class="timeline-content">
+                            <h5>c. 1440-1450</h5>
+                            <p>Gutenberg refines his system of movable type, a durable lead-tin-antimony alloy, oil-based ink, and a modified wine press.</p>
+                        </div>
+                    </li>
+                    <li class="timeline-item">
+                        <div class="timeline-content">
+                            <h5>1455</h5>
+                            <p>The Gutenberg Bible is printed, a monumental work of about 180 copies, showcasing the quality and potential of the new technology.</p>
+                        </div>
+                    </li>
+                    <li class="timeline-item">
+                        <div class="timeline-content">
+                            <h5>1460s-1500</h5>
+                            <p>Printing presses spread like wildfire across Europe – Italy, France, Spain, England. Over 1,000 printing shops were active by 1500.</p>
+                        </div>
+                    </li>
+                    <li class="timeline-item">
+                        <div class="timeline-content">
+                            <h5>1517</h5>
+                            <p>Martin Luther's Ninety-five Theses are rapidly printed and distributed, becoming a catalyst for the Protestant Reformation, demonstrating the press's power to challenge established authority.</p>
+                        </div>
+                    </li>
+                     <li class="timeline-item">
+                        <div class="timeline-content">
+                            <h5>16th-18th Centuries</h5>
+                            <p>The press becomes instrumental in the Scientific Revolution, enabling mass circulation of new theories. Rise of newspapers, pamphlets, and novels, fostering public discourse and modern literacy.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="common-thread-section">
+            <div class="container">
+                <h2>The Unbroken Thread: Ink, Idea, Imprint</h2>
+                <p class="lead">Though vastly different in mechanism and immediate reach, the pen and the press are kindred spirits, born of the same fundamental human desire: to make thought tangible, to give voice to ideas, and to leave a lasting imprint on the fabric of time.</p>
+                <div class="morph-visual-container" aria-label="Evolution of communication: Pen to Press to Pixel">
+                    <div class="morph-icon" id="morph-pen" title="Pen">✒️</div>
+                    <div class="morph-arrow" aria-hidden="true">→</div>
+                    <div class="morph-icon" id="morph-press" title="Press">🔤</div>
+                    <div class="morph-arrow" aria-hidden="true">→</div>
+                    <div class="morph-icon" id="morph-pixel" title="Pixel">💻</div>
+                </div>
+                <p>The pen translates the intimate flow of individual consciousness into script. The press amplifies these scripts, transforming personal reflections into public discourse, and individual insights into collective knowledge. Both harness the power of ink—that humble, yet potent medium—to bridge minds, span generations, and build the edifice of human civilization, one mark at a time.</p>
+            </div>
+        </section>
+
+        <section id="legacy-section">
+            <div class="container">
+                <h2>Digital Echoes: The Enduring Legacy</h2>
+                <p class="lead">Every tap on a keyboard, every shared file, every digital word you read, carries the DNA of these two pivotal inventions. The screen is our modern paper, the network our global printing press, the cursor our digital pen.</p>
+                <p>The ballpoint pen democratized personal record-keeping and expression. The printing press democratized access to information and enabled mass movements. Today, their legacy converges in the digital realm, empowering individuals with the tools to create and disseminate on a scale previously unimaginable. The fundamental drive to communicate, to share, to argue, to learn, and to build upon the ideas of others—this is the enduring inheritance of ink and impact.</p>
+                
+                <div class="thought-cloud-area">
+                    <h4>Add Your Voice to the Continuum</h4>
+                    <p>The narrative of human expression is ever-evolving. Share a single word that encapsulates the power of communication or these tools for you. Your word will briefly join the digital ether.</p>
+                    <div class="thought-cloud-form" role="form" aria-labelledby="thought-prompt">
+                        <label id="thought-prompt" class="visually-hidden">Enter a word representing communication's power</label>
+                        <input type="text" id="userThoughtInput" placeholder="e.g., Legacy, Connect, Future" aria-label="Your word of impact"> 
+                        <button id="shareThoughtButton">Share Word</button>
+                    </div>
+                    <div id="shared-idea-display" aria-live="polite">
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="page-footer">
+        <div class="container">
+            <p>© <span id="currentYear"></span> Ink & Impact. Crafted with ♥ for the power of the mark.</p>
+            <p>This interactive narrative explores how simple tools forged the path of human expression. <a href="#hero">Return to Top</a></p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Initial Setup for JS-controlled section visibility ---
+            const sectionsToObserve = document.querySelectorAll('section:not(#hero)');
+            sectionsToObserve.forEach(section => {
+                section.classList.add('js-section-to-reveal'); // Add class to hide them initially
+            });
+
+            // --- Intersection Observer for scroll animations ---
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            const morphIcons = [
+                document.getElementById('morph-pen'),
+                document.getElementById('morph-press'),
+                document.getElementById('morph-pixel')
+            ].filter(Boolean);
+
+            const sectionObserverOptions = { root: null, rootMargin: '0px', threshold: 0.20 };
+            const timelineObserverOptions = { root: null, rootMargin: '0px', threshold: 0.5 };
+            const morphObserverOptions = { root: null, rootMargin: '0px', threshold: 0.6 };
+
+            const sectionObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        if (entry.target.id === 'pen-section') {
+                            const penCounter = document.getElementById('pen-counter');
+                            if (penCounter && !penCounter.classList.contains('counted')) {
+                                animateCounter(penCounter);
+                                penCounter.classList.add('counted');
+                            }
+                        }
+                        // To animate sections only once:
+                        // sectionObserver.unobserve(entry.target); 
+                    } else {
+                        // Optional: Re-hide if you want animations on scroll up too
+                        // entry.target.classList.remove('visible');
+                        // if (entry.target.id === 'pen-section') { // Reset counter if section is hidden again
+                        //    const penCounter = document.getElementById('pen-counter');
+                        //    if(penCounter) penCounter.classList.remove('counted');
+                        // }
+                    }
+                });
+            }, sectionObserverOptions);
+
+            sectionsToObserve.forEach(section => sectionObserver.observe(section));
+
+
+            const timelineObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, timelineObserverOptions);
+
+            timelineItems.forEach(item => timelineObserver.observe(item));
+            
+            let morphIconIndex = 0;
+            let morphInterval;
+
+            const animateMorphIcons = () => {
+                morphIcons.forEach(icon => icon.classList.remove('active'));
+                if (morphIcons[morphIconIndex]) {
+                    morphIcons[morphIconIndex].classList.add('active');
+                }
+                morphIconIndex = (morphIconIndex + 1) % morphIcons.length;
+            };
+
+            const morphContainer = document.querySelector('.morph-visual-container');
+            if (morphContainer && morphIcons.length > 0) {
+                const morphSectionObserver = new IntersectionObserver(entries => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            animateMorphIcons();
+                            morphInterval = setInterval(animateMorphIcons, 2000); 
+                        } else {
+                            clearInterval(morphInterval);
+                             morphIcons.forEach(icon => icon.classList.remove('active'));
+                             morphIconIndex = 0; 
+                        }
+                    });
+                }, morphObserverOptions);
+                morphSectionObserver.observe(morphContainer);
+            }
+
+            function animateCounter(element) {
+                const target = parseInt(element.getAttribute('data-target'));
+                if (isNaN(target)) return;
+                let current = 0;
+                const duration = 3000; 
+                const stepTime = 20;
+                const totalSteps = duration / stepTime;
+                const increment = target / totalSteps;
+
+                const timer = setInterval((). => {
+                    current += increment;
+                    if (current >= target) {
+                        clearInterval(timer);
+                        current = target;
+                    }
+                    element.textContent = Math.floor(current).toLocaleString();
+                }, stepTime);
+            }
+
+            const penCard = document.getElementById('penExplodedViewCard');
+            if (penCard) {
+                const toggleDetails = () => penCard.classList.toggle('expanded');
+                penCard.addEventListener('click', toggleDetails);
+                penCard.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        toggleDetails();
+                    }
+                });
+            }
+
+            const toggleImpactBtn = document.getElementById('toggleImpactButton');
+            const thenCard = document.getElementById('then-card');
+            const nowCard = document.getElementById('now-card');
+            let showingThen = true;
+
+            if (toggleImpactBtn && thenCard && nowCard) {
+                toggleImpactBtn.addEventListener('click', () => {
+                    showingThen = !showingThen;
+                    thenCard.style.display = showingThen ? 'flex' : 'none';
+                    nowCard.style.display = showingThen ? 'none' : 'flex';
+                    toggleImpactBtn.textContent = showingThen ? 'Witness the Dawn of Print' : 'Revisit the Age of Scribes';
+                });
+            }
+            
+            const shareThoughtButton = document.getElementById('shareThoughtButton');
+            const userThoughtInput = document.getElementById('userThoughtInput');
+            const sharedIdeaDisplay = document.getElementById('shared-idea-display');
+
+            if (shareThoughtButton && userThoughtInput && sharedIdeaDisplay) {
+                shareThoughtButton.addEventListener('click', () => {
+                    const thought = userThoughtInput.value.trim();
+                    if (thought) {
+                        const wordSpan = document.createElement('span');
+                        wordSpan.className = 'shared-word-animation';
+                        wordSpan.textContent = `"${thought}"`;
+                        sharedIdeaDisplay.innerHTML = ''; 
+                        sharedIdeaDisplay.appendChild(wordSpan);
+                        userThoughtInput.value = '';
+                    }
+                });
+            }
+
+            const currentYearElement = document.getElementById('currentYear');
+            if (currentYearElement) {
+                currentYearElement.textContent = new Date().getFullYear();
+            }
+        });
+    </script>
+</body>
+</html>
